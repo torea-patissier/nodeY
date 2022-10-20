@@ -4,7 +4,10 @@ const port = 3000;
 let pokemons = require('./mock-pokemon');
 const helper = require('./helper');
 
-app.get('/', (req,res)=> res.send('HELLO  WORLD'))
+app.use((req,res,next) =>{ //my first middleware
+    console.log(`The URL you asked for : ${req.url}`)
+    next()
+})
 
 app.get('/api/pokemons/:id',(req,res)=>{
     const id = parseInt(req.params.id)
