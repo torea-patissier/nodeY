@@ -12,13 +12,10 @@ app.get('/api/pokemons/:id',(req,res)=>{
     const message = 'Pokémon trouvé'
     res.json(helper.success(message,pokemon));
 })
-/**
- * parseInt or we get error because express transform id type int in string
- * pokémon id == id pass in URL
- */
 
 app.get('/api/pokemons',(req,res)=>{
-    res.send(`Il y'a ${pokemons.length} pokémons dans la Bdd`)
+    const message = 'Tous les pokémons sont ici : '
+    res.json(helper.success(message,pokemons));
 });
 
 app.listen(port,()=> console.log(`Notre app à démmarrée sur le port localhost:${port}`));
