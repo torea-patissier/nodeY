@@ -3,11 +3,18 @@ const app = express();
 const port = 3000;
 let pokemons = require('./mock-pokemon');
 const helper = require('./helper');
+const morgan = require('morgan');
+const favicon = require('serve-favicon');
 
-app.use((req,res,next) =>{ //my first middleware
-    console.log(`The URL you asked for : ${req.url}`)
-    next()
-})
+/**
+ * Syntaxe pour chaîner plusieurs middleware .use
+ */
+
+app
+   .use(favicon(__dirname + '/favicon.ico'))
+   .use(morgan('dev'))
+
+app.get('/',(req,res,next)=>res.send('Hi again'))
 
 app.get('/api/pokemons/:id',(req,res)=>{
     const id = parseInt(req.params.id)
