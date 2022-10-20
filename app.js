@@ -15,4 +15,11 @@ app.get('/api/pokemons/:id',(req,res)=>{
  * pokémon id == id pass in URL
  */
 
+app.get('/api/pokemons',(req,res)=>{
+    res.send(`Il y'a ${pokemons.length} pokémons dans la Bdd`)
+});
+/**
+ * Get ALL
+ */
+
 app.listen(port,()=> console.log(`Notre app à démmarrée sur le port ${port}`));
