@@ -36,8 +36,18 @@ app.post('/api/pokemons',(req,res) => {
      * created new date = la date
      */
     pokemons.push(pokemonCreated)
-    const message = `Le pokémon ${pokemonCreated} à bien été créé!`;
+    const message = `Le pokémon ${pokemonCreated.name} à bien été créé!`;
     res.json(helper.success(message, pokemonCreated));
+})
+
+app.put('/api/pokemons/:id',(req,res) => {
+    const id = parseInt(req.params.id)
+    const pokemonUpdated = { ...req.body, id: id }
+    pokemons = pokemons.map(pokemon => {
+        return pokemon.id === id ? pokemonUpdated : pokemon
+    })
+    const message = `Le pokémon ${pokemonUpdated.name} à bien été modifié !`
+    res.json(helper.success(message, pokemonUpdated))
 })
 
 app.listen(port,()=> console.log(`Notre app à démmarrée sur le port localhost:${port}`));
