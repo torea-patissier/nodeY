@@ -5,16 +5,14 @@ let pokemons = require('./mock-pokemon');
 const helper = require('./helper');
 const morgan = require('morgan');
 const favicon = require('serve-favicon');
-
-/**
- * Syntaxe pour chaîner plusieurs middleware .use
- */
+const bodyParser = require('body-parser');
 
 app
    .use(favicon(__dirname + '/favicon.ico'))
    .use(morgan('dev'))
+   .use(bodyParser.json()) // Pour parser toutes les données envoyés vers l'API
 
-app.get('/',(req,res,next)=>res.send('Hi again'))
+app.get('/',(req,res)=>res.send('Hi again'))
 
 app.get('/api/pokemons/:id',(req,res)=>{
     const id = parseInt(req.params.id)
@@ -27,5 +25,19 @@ app.get('/api/pokemons',(req,res)=>{
     const message = 'Tous les pokémons sont ici : '
     res.json(helper.success(message,pokemons));
 });
+
+app.post('/api/pokemons',(req,res) => {
+    const id = helper.getUniqueId(pokemons);
+    const pokemonCreated = {...req.body,... { id: id, created: new Date()} }
+    /**
+     * On ajoute dans pokemonCreated
+     * req.body = le body du formulaire
+     * id = l'id créé à la mano
+     * created new date = la date
+     */
+    pokemons.push(pokemonCreated)
+    const message = `Le pokémon ${pokemonCreated} à bien été créé!`;
+    res.json(helper.success(message, pokemonCreated));
+})
 
 app.listen(port,()=> console.log(`Notre app à démmarrée sur le port localhost:${port}`));
