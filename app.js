@@ -6,6 +6,16 @@ const helper = require('./helper');
 const morgan = require('morgan');
 const favicon = require('serve-favicon');
 const bodyParser = require('body-parser');
+const { Sequelize } = require('sequelize');
+
+const sequelize = new Sequelize('pokedex', 'root', 'root', {
+  host: 'localhost',
+  dialect: 'mysql'
+});
+
+sequelize.authenticate()
+   .then(console.log('Connexion OK'))
+   .catch(error => console.log(`Error on connexion = " ${error} "`))
 
 app
    .use(favicon(__dirname + '/favicon.ico'))
