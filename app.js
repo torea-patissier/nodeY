@@ -6,7 +6,7 @@ const helper = require('./helper');
 const morgan = require('morgan');
 const favicon = require('serve-favicon');
 const bodyParser = require('body-parser');
-const { Sequelize, DataTypes} = require('sequelize'); //Datatype add
+const {Sequelize, DataTypes} = require('sequelize'); //Datatype add
 const pokemonModel = require('./src/models/pokemon'); // add
 
 const sequelize = new Sequelize('pokedex', 'root', 'root', {
@@ -18,19 +18,21 @@ sequelize.authenticate()
    .then(console.log('Connexion OK'))
    .catch(error => console.log(`Error on connexion = " ${error} "`))
 
-const Pokemon = pokemonModel(sequelize,DataTypes) // instance of the pokemon model
+const Pokemon = pokemonModel(sequelize, DataTypes) // instance of the pokemon model
 
-sequelize.sync({force:true}) //This creates the table, dropping it first if it already existed, see documentation
-   .then( () => {
+sequelize.sync({force: true}) //This creates the table, dropping it first if it already existed, see documentation
+   .then(() => {
      console.log(`Bdd créé`)
 
-     Pokemon.create({
-       name: 'bulbizzare',
-       hp: 5,
-       cp: 10,
-       picture: 'https://aze.png/',
-       types: ["Plante","Poison"].join() //join to send an array in Bdd separate by "," => "Plante","Poison"
-     }).then( item => console.log(item.toJSON())) // then because we return a promise
+     pokemons.map(item => {
+       Pokemon.create({
+         name: item.name,
+         hp: item.hp,
+         cp: item.cp,
+         picture: item.picture,
+         types: item.types.join() //join to send an array in Bdd separate by "," => "Plante","Poison"
+       }).then(item => console.log(item.toJSON())) // then because we return a promise
+     })
    })
 
 app
@@ -71,11 +73,11 @@ app.put('/api/pokemons/:id', (req, res) => {
 })
 
 app.delete('/api/pokemons/:id', (req, res) => {
-    const id = parseInt(req.params.id)
-    const pokemonDeleted = pokemons.find(pokemon => pokemon.id === id)
-    pokemons  = pokemons.filter(pokemon => pokemon.id !== id)
-    const message = `Le pokémon ${pokemonDeleted.name} à bien été supprimé !`
-    res.json(helper.success(message,pokemonDeleted))
+  const id = parseInt(req.params.id)
+  const pokemonDeleted = pokemons.find(pokemon => pokemon.id === id)
+  pokemons = pokemons.filter(pokemon => pokemon.id !== id)
+  const message = `Le pokémon ${pokemonDeleted.name} à bien été supprimé !`
+  res.json(helper.success(message, pokemonDeleted))
 })
 
 app.listen(port, () => console.log(`Notre app à démmarrée sur le port localhost:${port}`));
