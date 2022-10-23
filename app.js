@@ -6,7 +6,8 @@ const helper = require('./helper');
 const morgan = require('morgan');
 const favicon = require('serve-favicon');
 const bodyParser = require('body-parser');
-const { Sequelize } = require('sequelize');
+const { Sequelize, DataTypes} = require('sequelize'); //Datatype add
+const pokemonModel = require('./src/models/pokemon'); // add
 
 const sequelize = new Sequelize('pokedex', 'root', 'root', {
   host: 'localhost',
@@ -17,10 +18,25 @@ sequelize.authenticate()
    .then(console.log('Connexion OK'))
    .catch(error => console.log(`Error on connexion = " ${error} "`))
 
+const Pokemon = pokemonModel(sequelize,DataTypes) // instance of the pokemon model
+
+sequelize.sync({force:true}) //This creates the table, dropping it first if it already existed, see documentation
+   .then( () => {
+     console.log(`Bdd créé`)
+
+     Pokemon.create({
+       name: 'bulbizzare',
+       hp: 5,
+       cp: 10,
+       picture: 'https://aze.png/',
+       types: ["Plante","Poison"].join() //join to send an array in Bdd separate by "," => "Plante","Poison"
+     }).then( item => console.log(item.toJSON())) // then because we return a promise
+   })
+
 app
    .use(favicon(__dirname + '/favicon.ico'))
    .use(morgan('dev'))
-   .use(bodyParser.json()) // Pour parser toutes les données envoyés vers l'API
+   .use(bodyParser.json())
 
 app.get('/', (req, res) => res.send('Hi again'))
 
@@ -39,12 +55,6 @@ app.get('/api/pokemons', (req, res) => {
 app.post('/api/pokemons', (req, res) => {
   const id = helper.getUniqueId(pokemons);
   const pokemonCreated = {...req.body, ...{id: id, created: new Date()}}
-  /**
-   * On ajoute dans pokemonCreated
-   * req.body = le body du formulaire
-   * id = l'id créé à la mano
-   * created new date = la date
-   */
   pokemons.push(pokemonCreated)
   const message = `Le pokémon ${pokemonCreated.name} à bien été créé!`;
   res.json(helper.success(message, pokemonCreated));
