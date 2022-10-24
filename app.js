@@ -14,10 +14,17 @@ app
 
 sequelize.initDb();
 
+//Routes of API
 require('./src/routes/findAllPokemons')(app);
 require('./src/routes/findPokemonByPk')(app);
 require('./src/routes/createPokemon')(app);
 require('./src/routes/updatePokemons')(app);
 require('./src/routes/deletePokemons')(app);
+
+//Errors gestion
+app.use(({res}) => {
+  const message = `Impossible de trouver la route demandé! Essayez une autre URL.`
+  res.status(404).json({message})
+})
 
 app.listen(port, () => console.log(`Notre app à démmarrée sur le port localhost:${port}`));
